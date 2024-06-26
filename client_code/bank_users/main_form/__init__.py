@@ -6,6 +6,7 @@ from anvil.google.drive import app_files
 import anvil.users
 import anvil.tables as tables
 import anvil.tables.query as q
+import anvil.js
 from anvil.tables import app_tables
 from anvil.js.window import navigator
 from ..user_form import user_module
@@ -31,6 +32,32 @@ class main_form(main_formTemplate):
         
     #     # Set up event handlers
     #     self.button_2_click_event = self.button_2_click
+    # Initialize history stack
+    self.history_stack = []
+    
+    # Listen for popstate events
+    anvil.js.window.addEventListener('popstate', self.handle_popstate)
+    
+    # Handle the initial URL load
+    self.handle_initial_load()
+
+  def handle_initial_load(self):
+    current_url = anvil.js.window.location.hash.strip('#')
+    if current_url:
+      self.navigate_to(current_url, add_to_history=False)
+    else:
+      self.navigate_to('bank_users.main_form', add_to_history=False)  # Replace 'default_form' with your default form name
+
+  def handle_popstate(self, event):
+    if self.history_stack:
+      previous_form_name = self.history_stack.pop()
+      self.navigate_to(previous_form_name, add_to_history=False)
+
+  def navigate_to(self, form_name, add_to_history=True):
+    if add_to_history:
+      self.history_stack.append(form_name)
+      anvil.js.window.history.pushState({}, '', f'#{form_name}')
+      open_form('bank_users.main_form.login_page')
   
   def login_signup_button_click(self, **event_args):
     open_form('bank_users.main_form.login_page')
