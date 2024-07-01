@@ -4,7 +4,6 @@ import anvil.server
 import anvil.google.auth, anvil.google.drive
 from anvil.google.drive import app_files
 import anvil.users
-import routing_setup
 from anvil_extras import routing
 import anvil.tables as tables
 import anvil.tables.query as q
